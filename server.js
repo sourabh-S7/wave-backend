@@ -53,7 +53,7 @@ setInterval(cleanOldFiles, 30 * 60 * 1000);
 
 app.get('/', (req, res) => {
   res.json({
-    status: '🎵 Music Downloader API is running',
+    status: 'Music Downloader API is running',
     version: '2.0.0',
     endpoints: {
       // YouTube
@@ -88,7 +88,7 @@ app.get('/api/info/youtube', async (req, res) => {
       data: {
         id: info.id,
         title: info.title,
-        duration: info.duration,           // seconds
+        duration: info.duration,           
         thumbnail: info.thumbnail,
         channel: info.channel || info.uploader,
         description: info.description ? info.description.substring(0, 300) + '…' : '',
@@ -118,7 +118,7 @@ app.post('/api/download/youtube', async (req, res) => {
       noCheckCertificates: true,
       preferFreeFormats: true,
       addMetadata: true,
-      embedThumbnail: false,          // avoid ffmpeg thumbnail issues on Render free tier
+      embedThumbnail: false,          
     });
 
     const downloadedFile = await findFileByTimestamp(timestamp);
@@ -501,7 +501,7 @@ app.use((err, req, res, next) => {
 });
 
 
-app.listen(PORT, () => {
+app.listen(PORT,"0.0.0.0", () => {
   console.log(`Server running on port ${PORT}`);
   console.log(`Downloads directory: ${downloadsDir}`);
 });
