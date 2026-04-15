@@ -4,7 +4,7 @@ const ytdlp = require('yt-dlp-exec');
 const path = require('path');
 const fs = require('fs').promises;
 const { existsSync } = require('fs');
-
+const { spawn } = require("child_process");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -62,6 +62,7 @@ app.get('/', (req, res) => {
       youtubeStream:           'GET  /api/stream/youtube?url=VIDEO_URL',
       youtubePlaylistInfo:     'GET  /api/info/youtube/playlist?url=PLAYLIST_URL',
       youtubePlaylistDownload: 'POST /api/download/youtube/playlist body: { url }',
+      directDownload           'GET  /api/download?url=yotubelink'
       // Spotify
       spotifyInfo:             'GET  /api/info/spotify?url=SPOTIFY_URL',
       spotifyDownload:         'POST /api/download/spotify         body: { url }',
@@ -105,7 +106,6 @@ app.get('/api/info/youtube', async (req, res) => {
 app.post('/api/download/youtube', async (req, res) => {
   const { url } = req.body;
   if (!url) return res.status(400).json({ error: 'url is required in body' });
-
   try {
     const timestamp = Date.now();
     const outputTemplate = path.join(downloadsDir, `${timestamp}-%(title)s.%(ext)s`);
@@ -118,7 +118,11 @@ app.post('/api/download/youtube', async (req, res) => {
       noCheckCertificates: true,
       preferFreeFormats: true,
       addMetadata: true,
+<<<<<<< HEAD
+      embedThumbnail: false,
+=======
       embedThumbnail: false,          
+>>>>>>> 79ba4eda3cbb0f4f1b5e7617c170ff222469d780
     });
 
     const downloadedFile = await findFileByTimestamp(timestamp);
@@ -494,6 +498,44 @@ app.post('/api/download/spotify/playlist', async (req, res) => {
   }
 });
 
+// wrapper for ytdlp to download audio directly - 15/4/26 Kushagra 
+app.get("/api/download", (req, res) => {
+    const { url } = req.query;
+
+    if (!url) {
+      return res.status(400).json({ error: "URL required" });
+    }
+
+    const yt = spawn("yt-dlp", [
+      "-f", "bestaudio",
+      "--extract-audio",
+      "--audio-format", "mp3",
+      "-o", "-",        
+      url
+    ]);
+
+    res.setHeader("Content-Disposition", "attachment; filename=audio.mp3");
+    res.setHeader("Content-Type", "audio/mpeg");
+
+    yt.stdout.pipe(res);
+
+    yt.stderr.on("data", (data) => {
+      console.error("yt-dlp error:", data.toString());
+    });
+
+    yt.on("close", (code) => {
+      if (code !== 0) {
+        console.error("yt-dlp exited with code", code);
+        if (!res.headersSent) {
+          res.status(500).end("Download failed");
+          }
+        }
+    });
+
+  req.on("close", () => {
+    yt.kill("SIGKILL"); 
+   });
+});
 
 app.use((err, req, res, next) => {
   console.error('Unhandled error:', err.stack);
