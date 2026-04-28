@@ -10,3 +10,5 @@ yarn-error.log*
 .vscode/
 node_modules
 downloads
+.vercel
+.env*.local

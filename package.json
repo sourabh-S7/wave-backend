@@ -1,19 +1,23 @@
 {
   "name": "wave-backend",
-  "version": "3.0.0",
-  "description": "wave downloader API — Vercel serverless edition",
-  "main": "api/index.js",
+  "version": "2.0.0",
+  "description": "wave Music downloader API – YouTube & Spotify, single tracks and playlists",
+  "main": "server.js",
+  "type": "commonjs",
   "scripts": {
-    "dev": "node -e \"require('./api/index.js').listen(3000, () => console.log('Dev server on :3000'))\"",
-    "start": "node api/index.js"
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   },
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.18.2",
-    "spotify-url-info": "^3.2.14",
+    "spotify-url-info": "^3.2.12",
     "yt-dlp-exec": "^1.0.2"
   },
-  "engines": {
-    "node": ">=18"
+  "devDependencies": {
+    "nodemon": "^3.0.1"
   }
 }
