@@ -1,0 +1,19 @@
+{
+  "name": "wave-backend",
+  "version": "3.0.0",
+  "description": "wave downloader API — Vercel serverless edition",
+  "main": "api/index.js",
+  "scripts": {
+    "dev": "node -e \"require('./api/index.js').listen(3000, () => console.log('Dev server on :3000'))\"",
+    "start": "node api/index.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "spotify-url-info": "^3.2.14",
+    "yt-dlp-exec": "^1.0.2"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
